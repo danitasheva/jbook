@@ -25,6 +25,7 @@ export const fetchPlugin = (inputCode: string) => {
         if (cachedResult) {
           return cachedResult;
         }
+        // console.log('cachedResult', cachedResult)
       });
 
       build.onLoad({ filter: /.css$/ }, async (args: any) => {
