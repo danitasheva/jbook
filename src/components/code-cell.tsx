@@ -8,22 +8,25 @@ import Resizable from "./resizable";
 
 const CodeCell: React.FC = () => {
   const [code, setCode] = useState("");
+  const [err, setErr] = useState("");
   const [input, setInput] = useState("");
 
   useEffect(() => {    
     const timer = setTimeout(async() => {
       const output = await bundle(input);
-      setCode(output);
+      setCode(output.code);
+      setErr(output.err);
     }, 1000)
     return() => {
       clearTimeout(timer)
     }
   }, [input])
-
-  const onClick = async () => {
-    const output = await bundle(input);
-    setCode(output);
-  };
+  
+  // const onClick = async () => {
+  //   const output = await bundle(input);
+  //   setCode(output.code);
+  //   setErr(output.err);
+  // };
   return (
     <Resizable direction="vertical">
       <div
@@ -40,7 +43,7 @@ const CodeCell: React.FC = () => {
             onChange={(value) => setInput(value)}
           />
         </Resizable>
-        <Preview code={code} />
+        <Preview code={code} err={err} />
       </div>
     </Resizable>
   );
