@@ -1,14 +1,20 @@
 import { useRef, useState, useEffect } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import "./text-editor.css";
+import { Cell } from "../store";
+import { useActions } from "../hooks/useActions";
 
-interface TextEditorProps {}
+interface TextEditorProps {
+  cell: Cell
+}
 
-const TextEditor: React.FC<TextEditorProps> = () => {
+const TextEditor: React.FC<TextEditorProps> = ({ cell }) => {
   const ref = useRef<HTMLDivElement | null>(null);
 
   const [value, setValue] = useState("#Header");
   const [editing, setEditing] = useState(false);
+
+  const { updateCell } = useActions();
 
   useEffect(() => {
     const listener = (event: MouseEvent) => {
@@ -35,7 +41,8 @@ const TextEditor: React.FC<TextEditorProps> = () => {
   if (editing) {
     return (
       <div ref={ref} className="text-editor">
-        <MDEditor value={value} onChange={(v) =>  setValue(v || "") } />
+        <MDEditor value={cell.content} onChange={(v) =>  updateCell(cell.id, v || "") } />
+        {/* <MDEditor value={cell.content} onChange={(v) =>  setValue(v || "") } /> */}
       </div>
     );
   }
@@ -43,7 +50,7 @@ const TextEditor: React.FC<TextEditorProps> = () => {
   return (
     <div onClick={() => setEditing(true)} className="text-editor card ">
      <div className="card-content">
-      <MDEditor.Markdown source={value} style={{ whiteSpace: "pre-wrap" }} />
+      <MDEditor.Markdown source={cell.content || "Click to edit"} style={{ whiteSpace: "pre-wrap" }} />
      </div>
     </div>
   );
