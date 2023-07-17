@@ -6,6 +6,7 @@ import { store } from "./store";
 
 import CodeCell from "./components/code-cell";
 import TextEditor from "./components/text-editor";
+import CellList from "./components/cell-list";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -17,7 +18,8 @@ const App = () => {
     <Provider store={store} >
     <div>
       {/* <CodeCell />   */}
-      <TextEditor />
+      {/* <TextEditor /> */}
+      <CellList />
     </div>
     </Provider>
   );
