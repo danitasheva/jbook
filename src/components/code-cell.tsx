@@ -7,29 +7,51 @@ import bundle from "../bundler";
 import Resizable from "./resizable";
 import { Cell } from "../store";
 import { useActions } from "../hooks/useActions";
+import { useTypedSelector } from "../hooks/use-typed-selector";
+import "./code-cell.css";
 
 interface CodeCellProps {
-  cell: Cell
+  cell: Cell;
 }
 
 const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
-  const [code, setCode] = useState("");
-  const [err, setErr] = useState("");
-  const [input, setInput] = useState("");
-  const { updateCell } = useActions(); 
+  
+  const { updateCell, createBundle } = useActions();
+  const bundle = useTypedSelector((state) => state.bundles[cell.id]);
+  const cumulativeCode = useTypedSelector((state) => {
+    const { data, order } = state.cells;
+    const orderedCells = order.map(id => data[id]);
 
-  useEffect(() => {    
-    const timer = setTimeout(async() => {
-      // const output = await bundle(input);
-      const output = await bundle(cell.content);
-      setCode(output.code);
-      setErr(output.err);
-    }, 1000)
-    return() => {
-      clearTimeout(timer)
+    const cumulativeCode = [];
+
+    for (let c of orderedCells) {
+      if (c.type === "code") {
+        cumulativeCode.push(c.content);
+      } 
+      if (c.id === cell.id) {
+        break
+      }
     }
-  }, [cell.content])  
+    return cumulativeCode;
 
+  });
+
+  useEffect(() => {
+    if (!bundle) {
+      createBundle(cell.id, cell.content);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      createBundle(cell.id, cell.content);
+    }, 750);
+
+    return () => {
+      clearTimeout(timer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cell.content, cell.id, createBundle]);
+console.log("cumulativeCode", cumulativeCode)
   return (
     <Resizable direction="vertical">
       <div
@@ -43,28 +65,24 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
         <Resizable direction="horizontal">
           <CodeEditor
             initialValue={cell.content}
-            // onChange={(value) => setInput(value)}
             onChange={(value) => updateCell(cell.id, value)}
           />
         </Resizable>
-        <Preview code={code} err={err} />
+
+        <div className="progress-wrapper">
+          {!bundle || bundle.loading ? (
+            <div className="progress-cover">
+              <progress className="progress is-small is-primary " max="100">
+                Loading
+              </progress>
+            </div>
+          ) : (
+            <Preview code={bundle.code} err={bundle.err} />
+          )}
+        </div>
       </div>
     </Resizable>
   );
-  // return (
-  //   <Resizable direction="vertical">
-  //     <div style={{ width: "100%", display: "flex", flexDirection: 'row'}}>
-  //       <CodeEditor
-  //         initialValue="const a = 1;"
-  //         onChange={(value) => setInput(value)}
-  //       />
-  //       {/* <div>
-  //         <button onClick={onClick}>Submit</button>
-  //       </div> */}
-  //       <Preview code={code} />
-  //     </div>
-  //   </Resizable>
-  // );
 };
 
 export default CodeCell;

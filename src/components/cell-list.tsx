@@ -21,8 +21,8 @@ const CellList: React.FC = () => {
     );
   });
 
-  console.log("storeState", state);
-  console.log("cells ", cells);
+//   console.log("storeState", state);
+//   console.log("cells ", cells);
 
   return (
     <div>
