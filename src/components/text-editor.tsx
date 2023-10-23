@@ -5,7 +5,7 @@ import { Cell } from "../store";
 import { useActions } from "../hooks/useActions";
 
 interface TextEditorProps {
-  cell: Cell
+  cell: Cell;
 }
 
 const TextEditor: React.FC<TextEditorProps> = ({ cell }) => {
@@ -29,7 +29,7 @@ const TextEditor: React.FC<TextEditorProps> = ({ cell }) => {
       } else {
         //   console.log(event.target);
         //   console.log("element clicked is outside text editor");
-          setEditing(false);
+        setEditing(false);
       }
     };
     document.addEventListener("click", listener, { capture: true });
@@ -41,7 +41,10 @@ const TextEditor: React.FC<TextEditorProps> = ({ cell }) => {
   if (editing) {
     return (
       <div ref={ref} className="text-editor">
-        <MDEditor value={cell.content} onChange={(v) =>  updateCell(cell.id, v || "") } />
+        <MDEditor
+          value={cell.content}
+          onChange={(v) => updateCell(cell.id, v || "")}
+        />
         {/* <MDEditor value={cell.content} onChange={(v) =>  setValue(v || "") } /> */}
       </div>
     );
@@ -49,9 +52,12 @@ const TextEditor: React.FC<TextEditorProps> = ({ cell }) => {
 
   return (
     <div onClick={() => setEditing(true)} className="text-editor card ">
-     <div className="card-content">
-      <MDEditor.Markdown source={cell.content || "Click to edit"} style={{ whiteSpace: "pre-wrap" }} />
-     </div>
+      <div className="card-content">
+        <MDEditor.Markdown
+          source={cell.content || "Click to edit"}
+          style={{ whiteSpace: "pre-wrap" }}
+        />
+      </div>
     </div>
   );
 };

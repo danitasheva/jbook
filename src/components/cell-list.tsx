@@ -22,13 +22,12 @@ const CellList: React.FC = () => {
     );
   });
 
-//   console.log("storeState", state);
-//   console.log("cells ", cells);
+  //   console.log("storeState", state);
 
   return (
     <div className="cell-list">
       <AddCell forceVisible={cells.length === 0} previousCellId={null} />
-      {renderedCells}      
+      {renderedCells}
     </div>
   );
 };
